@@ -120,7 +120,7 @@ def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', default='Corpus-26', type=str, help='Corpus-8,Corpus-26, ')
-    parser.add_argument('--learning_rate', default=3e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
+    parser.add_argument('--learning_rate', default=5e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
     parser.add_argument('--dropout', default=0.5, type=float)
     parser.add_argument('--num_epoch', default=3, type=int, help='try larger number for non-BERT models')
     parser.add_argument('--batch_size', default=32, type=int, help='try 16, 32, 64 for BERT models')
