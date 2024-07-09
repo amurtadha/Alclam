@@ -65,17 +65,6 @@ class Instructor:
         for arg in vars(self.opt):
             logger.info('>>> {0}: {1}'.format(arg, getattr(self.opt, arg)))
 
-    # def _reset_params(self):
-    #     for child in self.model.children():
-    #         if type(child) != RobertaModel:  # skip bert params
-    #             for p in child.parameters():
-    #                 if p.requires_grad:
-    #                     if len(p.shape) > 1:
-    #                         self.opt.initializer(p)
-    #                     else:
-    #                         stdv = 1. / math.sqrt(p.shape[0])
-    #                         torch.nn.init.uniform_(p, a=-stdv, b=stdv)
-
     def warmup_linear(self, x, warmup=0.002):
         if x < warmup:
             return x / warmup
@@ -210,10 +199,8 @@ class Instructor:
 def main():
     # Hyper Parameters
     parser = argparse.ArgumentParser()
-    parser.add_argument('--dataset', default='Corpuss-2', type=str, help='Corpus-8,Corpus-26, ')
-    parser.add_argument('--baseline', default='ours', type=str, help='Corpus-8,Corpus-26, ')
-    parser.add_argument('--optimizer', default='adam', type=str)
-    parser.add_argument('--initializer', default='xavier_uniform_', type=str)
+    parser.add_argument('--dataset', default='Corpus-26', type=str, help='Corpus-8,Corpus-26, ')
+    parser.add_argument('--pretrained_bert_name', default='rahbi/alclam-base-v1', type=str, help='Corpus-8,Corpus-26, ')
     parser.add_argument('--learning_rate', default=3e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
     # parser.add_argument('--learning_rate', default=1e-3, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
     parser.add_argument('--adam_epsilon', default=2e-8, type=float, help='')
@@ -234,49 +221,16 @@ def main():
     parser.add_argument('--pretrained_bert_name', default='models/', type=str)
     parser.add_argument('--max_seq_len', default=128, type=int)
     parser.add_argument('--lebel_dim', default=3, type=int)
-    parser.add_argument('--cp', default=None, type=str)
     parser.add_argument("--local-rank", type=int, default=-1, help="For distributed training: local_rank")
 
     parser.add_argument('--device', default='cuda' , type=str, help='e.g. cuda:0')
-    # parser.add_argument('--device_group', default='1' , type=str, help='e.g. cuda:0')
-    parser.add_argument('--seed', default=65, type=int, help='set seed for reproducibility')
-    parser.add_argument('--valset_ratio', default=0.1, type=float, help='set ratio between 0 and 1 for validation support')
-    # The following parameters are only valid for the lcf-bert model
-    parser.add_argument('--local_context_focus', default='cdm', type=str, help='local context focus mode, cdw or cdm')
-    parser.add_argument('--SRD', default=3, type=int, help='semantic-relative-distance, see the paper of LCF-BERT model')
     opt = parser.parse_args()
 
 
     if opt.dataset in ['Corpus-9','Corpus-2','Corpus-26','Corpus-6']:
         opt.num_epoch = 10
-    # if dataset is not  None:
-    #     opt.dataset = dataset
-    # if baseline is not  None:
-    #     opt.baseline = baseline
-    # if device_group is not  None:
-    #     opt.device_group = device_group
-
-    plm = {
-        'mabert':'/workspace/ALCLAM/models_mabert/checkpoint-{}/'.format(opt.cp),
-        # 'ours':'/workspace/ALCLAM/models_alclam/checkpoint-{}'.format(opt.cp),
-        'ours':'/workspace/ALCLAM/models_best/checkpoint-{}'.format(opt.cp),
-        'alclam-v1':'/data/models/alclam-base-v1'.format(opt.cp),
-        'alclam-v2':'/data/models/alclam-base-v2'.format(opt.cp),
-        #    'ours':'OurArNLP/',
-        #'ours':'/data/models/plm/alclam/',
-        # 'camel':'CAMeL-Lab/bert-base-arabic-camelbert-msa',
-        'camel':'bert-base-arabic-camelbert-mix',
-        'labse':'sentence-transformers/LaBSE',
-        'arabert':'aubmindlab/bert-base-arabertv2',
-        'mdbert':'bashar-talafha/multi-dialect-bert-base-arabic',
-        'mbert':'models--google-bert--bert-base-multilingual-cased',
-        'peotbert':'models--faisalq--bert-base-arapoembert',
-        'arbert':'arbert',
-        # 'mabert':'mabert',
-
-    }
-    opt.pretrained_bert_name= plm.get(opt.baseline)
-    #opt.pretrained_bert_name= '/workspace/plm/'+plm.get(opt.baseline)
+   
+ 
     opt.workspace= '/workspace/plm/'
 
 
@@ -293,34 +247,17 @@ def main():
         torch.backends.cudnn.benchmark = False
 
     dataset_files = {
-        # 'train': '../datasets/{0}/train.json'.format(opt.dataset),
         'train': '/data/models/datasets/alclam/{0}/train.json'.format(opt.dataset),
         'test': '/data/models/datasets/alclam/{0}/test.json'.format(opt.dataset),
         'dev': '/data/models/datasets/alclam/{0}/dev.json'.format(opt.dataset)
     }
-    # os.environ['CUDA_VISIBLE_DEVICES']=opt.device_group
-    # os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-    # os.environ["CUDA_VISIBLE_DEVICES"] = opt.device_group
+  
     input_colses =  ['input_ids', 'segments_ids', 'input_mask', 'label']
-    initializers = {
-        'xavier_uniform_': torch.nn.init.xavier_uniform_,
-        'xavier_normal_': torch.nn.init.xavier_normal,
-        'orthogonal_': torch.nn.init.orthogonal_,
-    }
-    optimizers = {
-        'adadelta': torch.optim.Adadelta,  # default lr=1.0
-        'adagrad': torch.optim.Adagrad,  # default lr=0.01
-        'adam': AdamW,  # default lr=0.001
-        # 'adam': torch.optim.Adam,  # default lr=0.001
-        'adamax': torch.optim.Adamax,  # default lr=0.002
-        'asgd': torch.optim.ASGD,  # default lr=0.01
-        'rmsprop': torch.optim.RMSprop,  # default lr=0.01
-        'sgd': torch.optim.SGD,
-    }
+   
     opt.dataset_file = dataset_files
     opt.inputs_cols = input_colses
-    opt.initializer = initializers[opt.initializer]
-    opt.optimizer = optimizers[opt.optimizer]
+    opt.initializer = torch.nn.init.xavier_uniform_
+    opt.optimizer = torch.optim.Adam
     opt.device = torch.device(opt.device if torch.cuda.is_available() else 'cpu') \
         if opt.device is None else torch.device(opt.device)
 
