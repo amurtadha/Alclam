@@ -109,6 +109,7 @@ def _train(opt):
 
     with open("my_results.json", 'a+') as file:
         json.dump(test_results, file, indent=4)
+        file.write('\n,')
     # Save the fine-tuned model
     # model_path = "./fine_tuned_model"
     # model.save_pretrained(model_path)
