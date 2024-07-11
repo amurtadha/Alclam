@@ -90,7 +90,9 @@ def _train(opt):
         output_dir='./results',
         learning_rate=opt.learning_rate,
         overwrite_output_dir=True,
-        evaluation_strategy="epoch"
+        evaluation_strategy="epoch",
+        save_strategy="no"
+
     )
 
     trainer = Trainer(
@@ -123,8 +125,8 @@ def main():
     parser.add_argument('--dataset', default='Corpus-26', type=str, help='Corpus-8,Corpus-26, ')
     parser.add_argument('--learning_rate', default=5e-5, type=float, help='try 5e-5, 2e-5 for BERT, 1e-3 for others')
     parser.add_argument('--dropout', default=0.5, type=float)
-    parser.add_argument('--num_epoch', default=3, type=int, help='try larger number for non-BERT models')
-    parser.add_argument('--batch_size', default=32, type=int, help='try 16, 32, 64 for BERT models')
+    parser.add_argument('--num_epoch', default=6, type=int, help='try larger number for non-BERT models')
+    parser.add_argument('--batch_size', default=16, type=int, help='try 16, 32, 64 for BERT models')
     parser.add_argument('--max_seq_len', default=128, type=int)
     parser.add_argument('--lebel_dim', default=3, type=int)
     parser.add_argument("--local-rank", type=int, default=-1, help="For distributed training: local_rank")
