@@ -26,7 +26,7 @@ class MyDataset(Dataset):
         all_data=[]
         for d in tqdm(data):
             text, label = d['text'], d['label']
-
+            if label not in labels:continue
             data = {
                 'text': text,
                 'label': labels[label]
