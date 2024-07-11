@@ -18,7 +18,7 @@ Output:
 [{'label': 'يمني', 'score': 0.999321460723877}]
 ```
 ## Comparision
-To use our model, simply run `fine_tuning.py`. To achieve the results presented in the paper, use the folder `FT`.
+To use our model, simply run `fine_tuning.py`. To achieve the results presented in the paper, use the folder `Ft`.
 Below is a performance comparison of AlcLaM with other popular pretrained-language models on various datasets.
 ## F1 Comparison of Various PLMs on Different Datasets
 
