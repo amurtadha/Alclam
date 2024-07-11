@@ -20,7 +20,7 @@ Output:
 ## Comparision
 To use our model, simply run `fine_tuning.py`. To achieve the results presented in the paper, use the folder `Ft`.
 Below is a performance comparison of AlcLaM with other popular pretrained-language models on various datasets.
-## F1 Comparison of Various PLMs on Different Datasets
+#### F1 Comparison of Various PLMs on Different Datasets
 
 |              |    Task    | mBERT                     | LaBSE          | AraBERT                   | ArBERT         | MdBERT         | CAMeL          | MARBERT        | AlcLaM         |
 |--------------|------------|---------------------------|----------------|---------------------------|----------------|----------------|----------------|----------------|----------------|
@@ -42,7 +42,7 @@ Below is a performance comparison of AlcLaM with other popular pretrained-langua
 
 
 
-## Accuracy Comparison of Various PLMs on Different Datasets
+#### Accuracy Comparison of Various PLMs on Different Datasets
 
 |            | Task        | mBERT         | LaBSE         | AraBERT       | ArBERT       | MdBERT        | CAMeL         | MARBERT       | AlcLaM        |
 |------------|-------------|---------------|---------------|---------------|--------------|---------------|---------------|---------------|---------------|
