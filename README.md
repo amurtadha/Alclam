@@ -67,9 +67,13 @@ Below is a performance comparison of AlcLaM with other popular pretrained-langua
  If you use the code,  please cite the paper: 
 ```
 @article{murtadha2024alclam,
-  title={AlcLaM: Arabic Dialectal Language Model},
-  author={Murtadha, Ahmed and Saghir, Alfasly and Wen, Bo and Jamaal, Qasem and  Mohammed, Ahmed and Liu, Yunfeng},
-  journal={Arabic NLP 2024},
-  year={2024}
+	author       = {Murtadha, Ahmed and Saghir, Alfasly and Wen, Bo and Jamaal, Qasem and  Mohammed, Ahmed and Liu, Yunfeng},
+	title        = {AlcLaM: Arabic Dialectal Language Model},
+	journal      = {Arabic NLP 2024},
+	volume       = {abs/1812.03361},
+	year         = {2024},
+	url          = {https://arxiv.org/abs/2407.13097},
+	eprinttype    = {arXiv},
+	eprint       = {2407.13097}
 }
 ```
